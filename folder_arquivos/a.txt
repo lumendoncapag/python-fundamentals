@@ -1,1 +1,72 @@
-a
+#!/usr/bin/python3
+import sys
+import os
+from pathlib import Path
+import argparse
+
+usage = "\
+\nfind.py faz uma busca por caminhos no sistema (arquivos ou diretórios) a partir de um caminho de ponto de partida. \
+\n\nModo de uso: \
+\n\tfind.py --start [caminho-partida] --name [caminho-busca] \
+\n\tfind.py --start [caminho-partida] --type [f|d] \
+\nOpções: \
+\n\t--start = define o ponto de partida da busca. Obrigatório para utilizar as outras opções\
+\n\n\t--name = Procura o valor passado em [caminho-busca] no [caminho-partida] \
+\n\t\tExemplo: find.py --start /var/log --name auth.log          -> busca por auth.log dentro do diretório /var/log \
+\n\n\t--type = Procura, a partir do [caminho-partida], arquivos se for passado [f] ou diretório se for passado [d] \
+\n\t\tExemplo: find.py --start /var/log --type d                 -> busca por todos os diretório dentro de /var/log \
+"
+
+def error(msg):
+    print(f'ERRO: {msg}')
+    print(usage)
+    sys.exit(1)
+
+
+def validate_args(args):
+    if not os.path.isdir(args.start):
+        return error('O ponto de partida deve ser um caminho existente no sistema')
+    elif args.type not in ['d', 'f']:
+        return error('Tipo não suportado. Usar f para arquivos e d para diretórios ')
+
+
+def name_find(start, args):
+    for f in start.rglob(args.name):
+        print(f)
+
+
+def type_find(start, args):
+    for f in start.rglob('*'):
+        if args.type == "d" and f.is_dir():
+            print(f)
+        elif args.type == "f" and f.is_file():
+            print(f)
+
+
+def find(args):
+    start = Path(args.start)
+
+    if args.name and not args.type:
+        print(args.name)
+        name_find(start, args)
+    elif args.type and not args.name:
+        type_find(start,args)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--start', type=str)
+    parser.add_argument('--name', type=str)
+    parser.add_argument('--type', type=str)
+
+    return parser.parse_args()
+
+def main():
+    args = parse_args()
+    validate_args(args)
+    find(args)
+
+
+if __name__ == '__main__':
+    main()
