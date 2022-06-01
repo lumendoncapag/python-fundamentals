@@ -28,3 +28,4 @@ for letra in alfabeto:
     with open(f'/home/lumendonca/Desktop/python-fundamentals/folder_arquivos/{letra}.txt','w') as write:
         write.write(letra)
     write.close()
+    

@@ -16,7 +16,6 @@ def func (numero):
 func(10)
 func(-10)
 #EXERICIO 3
-
 def calcula (*numero,op):
     if op == 'adicao':
         soma = 0
@@ -43,5 +42,4 @@ calcula(1,5,op='multiplicao')
 def multi_nomes(*nomes,mult):
     for nome in nomes:
         print(nome*mult)
-
 multi_nomes('João','Maria',mult=2)
